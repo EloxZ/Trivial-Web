@@ -1,0 +1,57 @@
+/* Author: Eloy Barrionuevo Jiménez */
+
+:root {
+    --warmpink: #FF4D7A;
+    --greenpeas: #7DC45D;
+    --azure: #00ABFF;
+    --burningorange: #FD692E;
+    --cyanpastel: #8CDEDC;
+    --skyblue: #00C4FF;
+    --bluebg: #33586A;
+    --orangeweb: #fca311;
+    --platinum: #e5e5e5;
+    --ghostwhite: #f7f7ff;
+    --smokyblack: #131112;
+    --cultured: #f0f2ef;
+    --raisinblack: #28262c;
+}
+
+body {
+    background-color: var(--raisinblack) !important;
+    color: white !important;
+}
+
+.bg-warmpink {
+    background-color: var(--warmpink);
+}
+
+.bg-azure {
+    background-color: var(--azure);
+}
+
+.bg-skyblue {
+    background-color: var(--skyblue);
+}
+
+.bg-orangeweb {
+    background-color: var(--orangeweb);
+}
+
+.light-container {
+    background-color: var(--ghostwhite);
+    color: black;
+}
+
+.status-container {
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 0px 10px 0px 0px;
+}
+
+.log-container {
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 10px 0px 0px 0px;
+}
+
+.game {
+}
+

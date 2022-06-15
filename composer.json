@@ -1,0 +1,13 @@
+{
+    "name": "eloyb/trivia-siette",
+    "authors": [
+        {
+            "name": "EloxZ",
+            "email": "eloybj0@gmail.com"
+        }
+    ],
+    "require": {
+        "mongodb/mongodb": "1.11.0",
+        "econea/nusoap": "^0.9.11"
+    }
+}
