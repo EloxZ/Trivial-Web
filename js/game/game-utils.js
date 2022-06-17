@@ -2,9 +2,16 @@
 import Pencil from "https://unpkg.com/pencil.js/dist/pencil.esm.js";
 
 var tokenHit = new Howl({
-    src: ['./sounds/hitToken.mp3']
+    src: ['./sounds/hitToken.mp3'],
+    volume: 0.1
 });
 
+const timeout = async ms => new Promise(res => setTimeout(res, ms));
+var numberOfTimeouts = 0;
+
+export var waitingUserInput = false;
+export var diceAvailable = false;
+export var moving = false;
 export var actualScene;
 export var unit;
 export var outerCircle, innerCircle, horizontalRectangle, diagonalRectangle, diagonalRectangle2, hexagone, greenRectangle, blueRectangle, orangeRectangle, pinkRectangle, yellowRectangle,
@@ -35,33 +42,279 @@ export function getBox(boxId) {
         case 4:
             box = greenRectangle6;
             break;
+        case 5:
+            box = grayRectangle2;
+            break;
+        case 6:
+            box = pinkRectangle6;
+            break;
+        case 7:
+            box = blueCheeseRectangle;
+            break;
+        case 8:
+            box = pinkRectangle7;
+            break;
+        case 9:
+            box = grayRectangle3;
+            break;
+        case 10:
+            box = yellowRectangle7;
+            break;
+        case 11:
+            box = brownRectangle7;
+            break;
+        case 12:
+            box = grayRectangle4;
+            break;
+        case 13:
+            box = greenRectangle7;
+            break;
+        case 14:
+            box = orangeCheeseRectangle;
+            break;
+        case 15:
+            box = greenRectangle8;
+            break;
+        case 16:
+            box = grayRectangle5;
+            break;
+        case 17:
+            box = pinkRectangle8;
+            break;
+        case 18:
+            box = blueRectangle8;
+            break;
+        case 19:
+            box = grayRectangle6;
+            break;
+        case 20:
+            box = brownRectangle8;
+            break;
+        case 21:
+            box = yellowCheeseRectangle;
+            break;
+        case 22:
+            box = brownRectangle9;
+            break;
+        case 23:
+            box = grayRectangle7;
+            break;
+        case 24:
+            box = greenRectangle9;
+            break;
+        case 25:
+            box = orangeRectangle7;
+            break;
+        case 26:
+            box = grayRectangle8;
+            break;
+        case 27:
+            box = blueRectangle9;
+            break;
+        case 28:
+            box = pinkCheeseRectangle;
+            break;
+        case 29:
+            box = blueRectangle10;
+            break;
+        case 30:
+            box = grayRectangle9;
+            break;
+        case 31:
+            box = brownRectangle10;
+            break;
+        case 32:
+            box = yellowRectangle8;
+            break;
+        case 33:
+            box = grayRectangle10;
+            break;
+        case 34:
+            box = orangeRectangle8;
+            break;
+        case 35:
+            box = greenCheeseRectangle;
+            break;
+        case 36:
+            box = orangeRectangle9;
+            break;
+        case 37:
+            box = grayRectangle11;
+            break;
+        case 38:
+            box = blueRectangle11;
+            break;
+        case 39:
+            box = pinkRectangle9;
+            break;
+        case 40:
+            box = grayRectangle12;
+            break;
+        case 41:
+            box = yellowRectangle9;
+            break;
+
+        // Horizontal
+        case 42:
+            box = yellowRectangle;
+            break;
+        case 43:
+            box = pinkRectangle;
+            break;
+        case 44:
+            box = orangeRectangle;
+            break;
+        case 45:
+            box = blueRectangle;
+            break;
+        case 46:
+            box = greenRectangle;
+            break;
+        case 48:
+            box = orangeRectangle2;
+            break;
+        case 49:
+            box = pinkRectangle2;
+            break;
+        case 50:
+            box = greenRectangle2;
+            break;
+        case 51:
+            box = blueRectangle2;
+            break;
+        case 52:
+            box = brownRectangle;
+            break;
+
+        // Diagonal 1
+        case 53:
+            box = pinkRectangle3;
+            break;
+        case 54:
+            box = greenRectangle3;
+            break;
+        case 55:
+            box = yellowRectangle2;
+            break;
+        case 56:
+            box = orangeRectangle3;
+            break;
+        case 57:
+            box = brownRectangle2;
+            break;
+        case 59:
+            box = yellowRectangle3;
+            break;
+        case 60:
+            box = greenRectangle4;
+            break;
+        case 61:
+            box = brownRectangle3;
+            break;
+        case 62:
+            box = orangeRectangle4;
+            break;
+        case 63:
+            box = blueRectangle3;
+            break;
+
+        // Diagonal 2
+        case 64:
+            box = greenRectangle5;
+            break;
+        case 65:
+            box = brownRectangle5;
+            break;
+        case 66:
+            box = pinkRectangle5;
+            break;
+        case 67:
+            box = yellowRectangle5;
+            break;
+        case 68:
+            box = blueRectangle5;
+            break;
+        case 70:
+            box = pinkRectangle4;
+            break;
+        case 71:
+            box = brownRectangle4;
+            break;
+        case 72:
+            box = blueRectangle4;
+            break;
+        case 73:
+            box = yellowRectangle4;
+            break;
+        case 74:
+            box = orangeRectangle5;
+            break;
         default:
-            // code block
+            box = hexagone;
     }
 
     return box;
 }
 
 export function centerOfBox(box) {
-    var center = box.position.clone().add(45,32);
+    var center = box.position.clone().add(29*unit,20*unit);
     center.rotate(box.options.rotation, box.position);
 
     return center;
 }
 
+export function isCheeseBox(boxId) {
+    return (boxId == 0 || boxId == 7 || boxId == 14 || boxId == 21 || boxId == 28 || boxId == 35 );
+}
+
+export async function waitUserInput(boxes) {
+    var target = boxes[0];
+
+    boxes.forEach((box) => {
+        box.on("click", function moveTo() {
+            target = box;
+            waitingUserInput = false;
+            box.removeListener("click", moveTo);
+        })
+    });
+
+    waitingUserInput = true;
+    numberOfTimeouts = 0;
+    while (waitingUserInput) {
+        numberOfTimeouts++;
+        await timeout(50);
+        if (numberOfTimeouts > 250) {
+            waitingUserInput = false;
+        }
+    }
+    return target;
+} 
+
 export function moveToken(token, box) {
     if (box != null && token != null) {
-        var center = centerOfBox(box);
-        actualScene.on("draw", () => {
-            token.position.lerp(center, 0.05);
-            if (token.position.distance(center) <=  1) {
+        var finalPos = centerOfBox(box);
+        var initialPos = token.position.clone();
+        var elapsedTime = 0;
+        var lerpDuration = 600;
+        moving = true;
+
+        actualScene.on("draw", function moveAnimation() {
+            var deltaTime = (1/actualScene.fps) * 1000;
+
+            token.position.x = lerp(initialPos.x, finalPos.x, elapsedTime / lerpDuration);
+            token.position.y = lerp(initialPos.y, finalPos.y, elapsedTime / lerpDuration);
+
+            elapsedTime += deltaTime;
+            
+            
+            if (elapsedTime >= lerpDuration) {
                 tokenHit.play();
-                actualScene.removeListener("draw");
+                moving = false;
+                actualScene.removeListener("draw", moveAnimation);
             }
         }, true);
     }
 }
-
 
 export function startGame() {
     actualScene.startLoop();
@@ -70,19 +323,98 @@ export function startGame() {
 
 export function setupDice() {
     var cube = document.getElementById('cube');
-
     cube.style.visibility = "visible";
+    cube.addEventListener("click", moveDice);
+}
 
-    var min = 1;
-    var max = 24;
+export function activateDice() {
+    diceAvailable = true;
+}
 
-    cube.onclick = function() {
+export function disableDice() {
+    diceAvailable = false;
+}
+
+function lerp(a, b, t) {
+    return (1 - t) * a + t * b;
+}
+
+export function moveDice() {
+    if (diceAvailable) {
+        var min = 1;
+        var max = 24;
         var xRand = getRandom(max, min);
         var yRand = getRandom(max, min);
-
+    
         //cube.style.webkitTransform = 'rotateX('+xRand+'deg) rotateY('+yRand+'deg)';
         cube.style.transform = 'rotateX('+xRand+'deg) rotateY('+yRand+'deg)';
     }
+}
+
+export function selectBox(box) {
+    var color = box.options.fill;
+    var min = -8, max = 15, i = 0;
+    var brighter = true;
+    var blinkBox = function () {
+        if (brighter) {
+            i += 0.3 / actualScene.fps;
+            box.options.fill = shadeColor(color, i);
+            if (i >= max) {
+                brighter = false;
+            }
+        } else {
+            i -= 0.3 / actualScene.fps;
+            box.options.fill = shadeColor(color, i);
+            if (i <= min) {
+                brighter = true;
+            }
+        }
+    }
+    actualScene.on("draw", blinkBox);
+
+    return blinkBox;
+}
+
+export function unselectBox(blinkBox) {
+    actualScene.removeListener("draw", blinkBox);
+}
+
+
+export function getDiceNumber() {
+    var number = 1;
+
+    var frontFace = document.getElementById('frontFace');
+    var bottomFace = document.getElementById('bottomFace');
+    var backFace = document.getElementById('backFace');
+    var topFace = document.getElementById('topFace');
+    var leftFace = document.getElementById('leftFace');
+    var rightFace = document.getElementById('rightFace');
+
+    var ffS = frontFace.getBoundingClientRect();
+    var bfS = bottomFace.getBoundingClientRect();
+    var bafS = backFace.getBoundingClientRect();
+    var tfS = topFace.getBoundingClientRect();
+    var lfS = leftFace.getBoundingClientRect();
+    var rfS = rightFace.getBoundingClientRect();
+
+    var sizeTop = tfS.width * tfS.height;
+    var sizeBack = bafS.width * bafS.height;
+    var sizeRight = rfS.width * rfS.height;
+    var sizeLeft = lfS.width * lfS.height;
+    var sizeBot = bfS.width * bfS.height;
+    var sizeFront = ffS.width * ffS.height;
+
+    var max = Math.max(sizeTop, sizeBack, sizeRight, sizeLeft, sizeBot, sizeFront);
+    
+    number = (max == sizeBack)? 2 : number;
+    number = (max == sizeRight)? 3 : number;
+    number = (max == sizeLeft)? 4 : number;
+    number = (max == sizeTop)? 5 : number;
+    number = (max == sizeBot)? 6 : number;
+
+    console.log(number);
+    return number;
+
 }
 
 export function drawBoard() {
@@ -654,7 +986,7 @@ export function drawBoard() {
     });
 
     var centerBlueToken = [center[0] + unit*20, center[1] - unit*25];
-    blueToken = new Pencil.RegularPolygon(centerBlueToken, 6, hexagoneRadius*0.2, {
+    blueToken = new Pencil.Circle(centerBlueToken, hexagoneRadius*0.2, {
         fill: "#0000FF",
     });
 
@@ -681,4 +1013,24 @@ export function rotate(cx, cy, x, y, angle) {
 
 export function getRandom(max, min) {
     return (Math.floor(Math.random() * (max-min)) + min) * 90;
+}
+
+function shadeColor(color, percent) {
+    var R = parseInt(color.substring(1,3),16);
+    var G = parseInt(color.substring(3,5),16);
+    var B = parseInt(color.substring(5,7),16);
+
+    R = parseInt(R * (100 + percent) / 100);
+    G = parseInt(G * (100 + percent) / 100);
+    B = parseInt(B * (100 + percent) / 100);
+
+    R = (R<255)?R:255;  
+    G = (G<255)?G:255;  
+    B = (B<255)?B:255;  
+
+    var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+    var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+    var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+
+    return "#"+RR+GG+BB;
 }

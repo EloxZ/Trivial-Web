@@ -79,55 +79,56 @@ const AllowInclude = TRUE;
     ?>
 </div>
 
-<!-- Dado -->
-<section class="dice-container">
-    <div id="cube">
-        <div class="front">
-            <span class="dot dot1"></span>
-        </div>
-        <div class="back">
-            <span class="dot dot1"></span>
-            <span class="dot dot2"></span>
-        </div>
-        <div class="right">
-            <span class="dot dot1"></span>
-            <span class="dot dot2"></span>
-            <span class="dot dot3"></span>
-        </div>
-        <div class="left">
-            <span class="dot dot1"></span>
-            <span class="dot dot2"></span>
-            <span class="dot dot3"></span>
-            <span class="dot dot4"></span>
-        </div>
-        <div class="top">
-            <span class="dot dot1"></span>
-            <span class="dot dot2"></span>
-            <span class="dot dot3"></span>
-            <span class="dot dot4"></span>
-            <span class="dot dot5"></span>
-        </div>
-        <div class="bottom">
-            <span class="dot dot1"></span>
-            <span class="dot dot2"></span>
-            <span class="dot dot3"></span>
-            <span class="dot dot4"></span>
-            <span class="dot dot5"></span>
-            <span class="dot dot6"></span>
-        </div>
-    </div>
-</section>
+
 
 <div class="container-fluid">
     <div id="div-canvas" class="row justify-content-center">
         <div class="col-12 col-lg-2 status-container">
             <h3>Jugadores</h3>
+            <!-- Dado -->
+            <section class="dice-container mt-5">
+                <div id="cube">
+                    <div id="frontFace" class="front">
+                        <span class="dot dot1"></span>
+                    </div>
+                    <div id="backFace" class="back">
+                        <span class="dot dot1"></span>
+                        <span class="dot dot2"></span>
+                    </div>
+                    <div id="rightFace" class="right">
+                        <span class="dot dot1"></span>
+                        <span class="dot dot2"></span>
+                        <span class="dot dot3"></span>
+                    </div>
+                    <div id="leftFace" class="left">
+                        <span class="dot dot1"></span>
+                        <span class="dot dot2"></span>
+                        <span class="dot dot3"></span>
+                        <span class="dot dot4"></span>
+                    </div>
+                    <div id="topFace" class="top">
+                        <span class="dot dot1"></span>
+                        <span class="dot dot2"></span>
+                        <span class="dot dot3"></span>
+                        <span class="dot dot4"></span>
+                        <span class="dot dot5"></span>
+                    </div>
+                    <div id="bottomFace" class="bottom">
+                        <span class="dot dot1"></span>
+                        <span class="dot dot2"></span>
+                        <span class="dot dot3"></span>
+                        <span class="dot dot4"></span>
+                        <span class="dot dot5"></span>
+                        <span class="dot dot6"></span>
+                    </div>
+                </div>
+            </section>
         </div>
         <div id="trivia" class="col-12 col-lg-8" style="height: 1200px; margin: auto">
         </div>
         <div class="col-12 col-lg-2 log-container">
             <h3>Logs</h3>
-            <textarea name="logs" style="resize: none; width: 100%; height: 70%;" readonly="true"></textarea>
+            <textarea id="logs" style="resize: none; width: 100%; height: 70%;" readonly="true"></textarea>
         </div>
     </div>
 </div>
