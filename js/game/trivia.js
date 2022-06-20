@@ -19,6 +19,8 @@ cube.addEventListener("click", async function() {
         var boxes = [];
         var colors = [];
         var handlers = [];
+        var commands = [];
+        var command = 0;
 
         if (canMoveClockwise(bluePosition, lastDiceNumber)) {
             let idBox1 = (bluePosition+lastDiceNumber)%42;
@@ -36,23 +38,107 @@ cube.addEventListener("click", async function() {
             boxes.push(box1, box2);
             colors.push(color1, color2);
             handlers.push(handler1, handler2);
+            commands.push(0, 1);
+        }
+        var [b, p] = canMoveLineHorizontal(bluePosition, lastDiceNumber);
+        if (b) {
+            let box = GameUtils.getBox(p);
+            let color = box.options.fill;
+            let handler = GameUtils.selectBox(box);
+            boxes.push(box);
+            colors.push(color);
+            handlers.push(handler);
+            commands.push(2);
+        }
+        [b, p] = canMoveLineHorizontal(bluePosition, -lastDiceNumber);
+        if (b) {
+            let box = GameUtils.getBox(p);
+            let color = box.options.fill;
+            let handler = GameUtils.selectBox(box);
+            boxes.push(box);
+            colors.push(color);
+            handlers.push(handler);
+            commands.push(3);
+        }
+        [b, p] = canMoveLineDiagonal1(bluePosition, lastDiceNumber);
+        if (b) {
+            let box = GameUtils.getBox(p);
+            let color = box.options.fill;
+            let handler = GameUtils.selectBox(box);
+            boxes.push(box);
+            colors.push(color);
+            handlers.push(handler);
+            commands.push(4);
+        }
+        [b, p] = canMoveLineDiagonal1(bluePosition, -lastDiceNumber);
+        if (b) {
+            let box = GameUtils.getBox(p);
+            let color = box.options.fill;
+            let handler = GameUtils.selectBox(box);
+            boxes.push(box);
+            colors.push(color);
+            handlers.push(handler);
+            commands.push(5);
+        }
+        [b, p] = canMoveLineDiagonal2(bluePosition, lastDiceNumber);
+        if (b) {
+            let box = GameUtils.getBox(p);
+            let color = box.options.fill;
+            let handler = GameUtils.selectBox(box);
+            boxes.push(box);
+            colors.push(color);
+            handlers.push(handler);
+            commands.push(6);
+        }
+        [b, p] = canMoveLineDiagonal2(bluePosition, -lastDiceNumber);
+        if (b) {
+            let box = GameUtils.getBox(p);
+            let color = box.options.fill;
+            let handler = GameUtils.selectBox(box);
+            boxes.push(box);
+            colors.push(color);
+            handlers.push(handler);
+            commands.push(7);
         }
         
         
-
+        
+        console.log(boxes);
         
         var target = await GameUtils.waitUserInput(boxes);
 
         boxes.forEach((box, index) => {
             box.options.fill = colors[index];
             GameUtils.unselectBox(handlers[index]);
+            if (box == target) command = commands[index];
         });
-        
-        if (target == boxes[2]) {
-            bluePosition = await moveClockwise(GameUtils.blueToken, bluePosition, -lastDiceNumber);
-        } else {
-            bluePosition = await moveClockwise(GameUtils.blueToken, bluePosition, lastDiceNumber);
-        }
+
+        switch (command) {
+            case 0:
+                bluePosition = await moveClockwise(GameUtils.blueToken, bluePosition, lastDiceNumber);
+                break;
+            case 1:
+                bluePosition = await moveClockwise(GameUtils.blueToken, bluePosition, -lastDiceNumber);
+                break;
+            case 2:
+                bluePosition = await moveLineHorizontal(GameUtils.blueToken, bluePosition, lastDiceNumber);
+                break;
+            case 3:
+                bluePosition = await moveLineHorizontal(GameUtils.blueToken, bluePosition, -lastDiceNumber);
+                break;
+            case 4:
+                bluePosition = await moveLineDiagonal1(GameUtils.blueToken, bluePosition, lastDiceNumber);
+                break;
+            case 5:
+                bluePosition = await moveLineDiagonal1(GameUtils.blueToken, bluePosition, -lastDiceNumber);
+                break;
+            case 6:
+                bluePosition = await moveLineDiagonal2(GameUtils.blueToken, bluePosition, lastDiceNumber);
+                break;
+            case 7:
+                bluePosition = await moveLineDiagonal2(GameUtils.blueToken, bluePosition, -lastDiceNumber);
+                break;
+    }
 
         GameUtils.activateDice();
     }
@@ -131,24 +217,24 @@ async function moveLineMinMax(playerToken, currentBox, steps, min, max) {
             for (var step = 1; step<=steps; step++) {
                 pos = (currentBox+step);
 
-                switch (res) {
+                switch (pos) {
                     case 41:
-                        currentBox = 0;
+                        pos = 0;
                         break; 
                     case 53:
-                        currentBox = 21;
+                        pos = 21;
                         break;
                     case 52:
-                        currentBox = 7;
+                        pos = 7;
                         break; 
                     case 64:
-                        currentBox = 28;
+                        pos = 28;
                         break;
                     case 62:
-                        currentBox = 14;
+                        pos = 14;
                         break; 
                     case 74:
-                        currentBox = 35;
+                        pos = 35;
                         break;
                     default:
                         // Do Nothing
@@ -161,24 +247,24 @@ async function moveLineMinMax(playerToken, currentBox, steps, min, max) {
             for (var step = -1; step>=steps; step--) {
                 pos = currentBox+step;
 
-                switch (res) {
+                switch (pos) {
                     case 41:
-                        currentBox = 0;
+                        pos = 0;
                         break; 
                     case 53:
-                        currentBox = 21;
+                        pos = 21;
                         break;
                     case 52:
-                        currentBox = 7;
+                        pos = 7;
                         break; 
                     case 64:
-                        currentBox = 28;
+                        pos = 28;
                         break;
                     case 62:
-                        currentBox = 14;
+                        pos = 14;
                         break; 
                     case 74:
-                        currentBox = 35;
+                        pos = 35;
                         break;
                     default:
                         // Do Nothing
@@ -197,11 +283,13 @@ function canMoveLineMinMax(currentBox, steps, min, max) {
     var res = false;
     if (currentBox >= min && currentBox <= max && steps != 0) {
         res = (steps > 0)? (currentBox + steps <= max) : (currentBox + steps >= min);
+        console.log(res);
     }
-    return res;
+    return [res, (currentBox + steps)];
 }
 
 function canMoveLineHorizontal(currentBox, steps) {
+    
     switch (currentBox) {
         case 0:
             currentBox = 41;
@@ -210,9 +298,20 @@ function canMoveLineHorizontal(currentBox, steps) {
             currentBox = 53;
             break;
         default:
-            // Do Nothing
+            // Do Nothing 
     }
-    return canMoveLineMinMax(currentBox, steps, 41, 53);
+    var [b, p] = canMoveLineMinMax(currentBox, steps, 41, 53);
+    switch (p) {
+        case 41:
+            currentBox = 0;
+            break; 
+        case 53:
+            currentBox = 21;
+            break;
+        default:
+            // Do Nothing 
+    }
+    return [b, p];
 }
 
 function canMoveLineDiagonal1(currentBox, steps) {
