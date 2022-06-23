@@ -16,102 +16,104 @@ cube.addEventListener("click", async function() {
         await sleep(5000);
         lastDiceNumber = GameUtils.getDiceNumber();
 
-        var boxes = [];
+        var squares = [];
         var colors = [];
         var handlers = [];
         var commands = [];
-        var command = 0;
 
-        if (canMoveClockwise(bluePosition, lastDiceNumber)) {
-            let idBox1 = (bluePosition+lastDiceNumber)%42;
-            let idBox2 = (bluePosition-lastDiceNumber);
-            if (idBox2 < 0) {
-                idBox2 += 42;
-            }
-            let box1 = GameUtils.getBox(idBox1);
-            let box2 = GameUtils.getBox(idBox2);
-            let color1 = box1.options.fill;
-            let color2 = box2.options.fill;
-            let handler1 = GameUtils.selectBox(box1);
-            let handler2 = GameUtils.selectBox(box2);
+        var [result, pos1, pos2] = canMoveClockwise(bluePosition, lastDiceNumber);
+        if (result) {
+            let square1 = GameUtils.squares[pos1].object;
+            let square2 = GameUtils.squares[pos2].object;
+            let color1 = square1.options.fill;
+            let color2 = square2.options.fill;
+            let handler1 = GameUtils.selectSquare(square1);
+            let handler2 = GameUtils.selectSquare(square2);
 
-            boxes.push(box1, box2);
+            squares.push(square1, square2);
             colors.push(color1, color2);
             handlers.push(handler1, handler2);
             commands.push(0, 1);
         }
-        var [b, p] = canMoveLineHorizontal(bluePosition, lastDiceNumber);
-        if (b) {
-            let box = GameUtils.getBox(p);
-            let color = box.options.fill;
-            let handler = GameUtils.selectBox(box);
-            boxes.push(box);
+
+
+        var [result, pos] = canMoveLineHorizontal(bluePosition, lastDiceNumber);
+        if (result) {
+            let square = GameUtils.squares[pos].object;
+            let color = square.options.fill;
+            let handler = GameUtils.selectSquare(square);
+            squares.push(square);
             colors.push(color);
             handlers.push(handler);
             commands.push(2);
         }
-        [b, p] = canMoveLineHorizontal(bluePosition, -lastDiceNumber);
-        if (b) {
-            let box = GameUtils.getBox(p);
-            let color = box.options.fill;
-            let handler = GameUtils.selectBox(box);
-            boxes.push(box);
+
+        [result, pos] = canMoveLineHorizontal(bluePosition, -lastDiceNumber);
+        if (result) {
+            let square = GameUtils.squares[pos].object;
+            let color = square.options.fill;
+            let handler = GameUtils.selectSquare(square);
+            squares.push(square);
             colors.push(color);
             handlers.push(handler);
             commands.push(3);
         }
-        [b, p] = canMoveLineDiagonal1(bluePosition, lastDiceNumber);
-        if (b) {
-            let box = GameUtils.getBox(p);
-            let color = box.options.fill;
-            let handler = GameUtils.selectBox(box);
-            boxes.push(box);
+
+        [result, pos] = canMoveLineDiagonal1(bluePosition, lastDiceNumber);
+        if (result) {
+            let square = GameUtils.squares[pos].object;
+            let color = square.options.fill;
+            let handler = GameUtils.selectSquare(square);
+            squares.push(square);
             colors.push(color);
             handlers.push(handler);
             commands.push(4);
         }
-        [b, p] = canMoveLineDiagonal1(bluePosition, -lastDiceNumber);
-        if (b) {
-            let box = GameUtils.getBox(p);
-            let color = box.options.fill;
-            let handler = GameUtils.selectBox(box);
-            boxes.push(box);
+
+        [result, pos] = canMoveLineDiagonal1(bluePosition, -lastDiceNumber);
+        if (result) {
+            let square = GameUtils.squares[pos].object;
+            let color = square.options.fill;
+            let handler = GameUtils.selectSquare(square);
+            squares.push(square);
             colors.push(color);
             handlers.push(handler);
             commands.push(5);
         }
-        [b, p] = canMoveLineDiagonal2(bluePosition, lastDiceNumber);
-        if (b) {
-            let box = GameUtils.getBox(p);
-            let color = box.options.fill;
-            let handler = GameUtils.selectBox(box);
-            boxes.push(box);
+
+        [result, pos] = canMoveLineDiagonal2(bluePosition, lastDiceNumber);
+        if (result) {
+            let square = GameUtils.squares[pos].object;
+            let color = square.options.fill;
+            let handler = GameUtils.selectSquare(square);
+            squares.push(square);
             colors.push(color);
             handlers.push(handler);
             commands.push(6);
         }
-        [b, p] = canMoveLineDiagonal2(bluePosition, -lastDiceNumber);
-        if (b) {
-            let box = GameUtils.getBox(p);
-            let color = box.options.fill;
-            let handler = GameUtils.selectBox(box);
-            boxes.push(box);
+
+        [result, pos] = canMoveLineDiagonal2(bluePosition, -lastDiceNumber);
+        if (result) {
+            let square = GameUtils.squares[pos].object;
+            let color = square.options.fill;
+            let handler = GameUtils.selectSquare(square);
+            squares.push(square);
             colors.push(color);
             handlers.push(handler);
             commands.push(7);
         }
-        
-        
-        
-        console.log(boxes);
-        
-        var target = await GameUtils.waitUserInput(boxes);
 
-        boxes.forEach((box, index) => {
-            box.options.fill = colors[index];
-            GameUtils.unselectBox(handlers[index]);
-            if (box == target) command = commands[index];
+        var command = commands[0];
+
+        var target = await GameUtils.waitUserInput(squares);
+
+        squares.forEach((square, index) => {
+            square.options.fill = colors[index];
+            GameUtils.unselectSquare(handlers[index]);
+            if (square == target) command = commands[index];
         });
+
+        
 
         switch (command) {
             case 0:
@@ -144,9 +146,7 @@ cube.addEventListener("click", async function() {
     }
 })
 
-
 var bluePosition = 0;
-
 
 
 
@@ -165,225 +165,202 @@ GameUtils.startGame();
 window.addEventListener('resize', redrawBoard);
 GameUtils.activateDice();
 
+console.log(GameUtils.squares[0].nextRing);
+
 printMsgString("Intentando conectarse a servidor...");
 
 await sleep(1000);
-GameUtils.moveToken(GameUtils.blueToken, GameUtils.getBox(bluePosition));
+GameUtils.moveToken(GameUtils.blueToken, GameUtils.squares[bluePosition].object);
 await sleep(600);
 
 
 
 function redrawBoard() {
-    GameUtils.actualScene.stopLoop();
-    GameUtils.actualScene.clear;
+    GameUtils.scene.stopLoop();
+    GameUtils.scene.clear;
 
     document.getElementsByTagName("canvas").item(0).remove();
 
     GameUtils.drawBoard();
-    GameUtils.actualScene.startLoop();
+    GameUtils.scene.startLoop();
 }
 
-async function moveClockwise(playerToken, currentBox, steps) {
-    var pos = currentBox;
+async function moveClockwise(playerToken, currentSquare, steps) {
+    var pos = currentSquare;
     if (steps > 0) {
         for (var step = 1; step<=steps; step++) {
-            pos = (currentBox+step) % 42;
+            pos = GameUtils.squares[pos].nextRing;
             
-            GameUtils.moveToken(playerToken, GameUtils.getBox(pos));
+            GameUtils.moveToken(playerToken, GameUtils.squares[pos].object);
             await sleep(600);
         }
     } else if (steps < 0) {
         for (var step = -1; step>=steps; step--) {
-            pos = currentBox+step;
-            if (pos < 0) pos = -((-pos % 42) - 42);
-            if (pos == 42) pos = 0;
+            pos = GameUtils.squares[pos].prevRing;
             
-            GameUtils.moveToken(playerToken, GameUtils.getBox(pos));
+            GameUtils.moveToken(playerToken, GameUtils.squares[pos].object);
             await sleep(600);
         }
     }
     return pos;
 }
 
-function canMoveClockwise(currentBox) {
-    return (currentBox >= 0 && currentBox < 42); 
+function canMoveClockwise(currentSquare, steps) {
+    var res = (currentSquare >= 0 && currentSquare < 42);
+    var pos1 = (currentSquare+steps)%42;
+    var pos2 = (currentSquare-steps);
+    if (pos2 < 0) {
+        pos2 += 42;
+    }
+    return [res, pos1, pos2]; 
 }
 
-async function moveLineMinMax(playerToken, currentBox, steps, min, max) {
-    var pos = currentBox;
+function canMoveLineHorizontal(currentSquare, steps) {
+    var pos = currentSquare;
+    var res = true;
+    var step = 1;
 
-    if (canMoveLineMinMax(currentBox, steps, min, max)) {
-        if (steps > 0) {
-            for (var step = 1; step<=steps; step++) {
-                pos = (currentBox+step);
-
-                switch (pos) {
-                    case 41:
-                        pos = 0;
-                        break; 
-                    case 53:
-                        pos = 21;
-                        break;
-                    case 52:
-                        pos = 7;
-                        break; 
-                    case 64:
-                        pos = 28;
-                        break;
-                    case 62:
-                        pos = 14;
-                        break; 
-                    case 74:
-                        pos = 35;
-                        break;
-                    default:
-                        // Do Nothing
-                }
-                
-                GameUtils.moveToken(playerToken, GameUtils.getBox(pos));
-                await sleep(600);
+    if (steps > 0) {
+        while (res && step <= steps) {
+            if (GameUtils.squares[pos].nextHor != null) {
+                pos = GameUtils.squares[pos].nextHor;
+                step++;
+            } else {
+                res = false;
             }
-        } else if (steps < 0) {
-            for (var step = -1; step>=steps; step--) {
-                pos = currentBox+step;
-
-                switch (pos) {
-                    case 41:
-                        pos = 0;
-                        break; 
-                    case 53:
-                        pos = 21;
-                        break;
-                    case 52:
-                        pos = 7;
-                        break; 
-                    case 64:
-                        pos = 28;
-                        break;
-                    case 62:
-                        pos = 14;
-                        break; 
-                    case 74:
-                        pos = 35;
-                        break;
-                    default:
-                        // Do Nothing
-                }
-    
-                GameUtils.moveToken(playerToken, GameUtils.getBox(pos));
-                await sleep(600);
+        }
+    } else {
+        steps = -steps;
+        while (res && step <= steps) {
+            if (GameUtils.squares[pos].prevHor != null) {
+                pos = GameUtils.squares[pos].prevHor;
+                step++;
+            } else {
+                res = false;
             }
         }
     }
 
+    return [res, pos];
+}
+
+function canMoveLineDiagonal1(currentSquare, steps) {
+    var pos = currentSquare;
+    var res = true;
+    var step = 1;
+
+    if (steps > 0) {
+        while (res && step <= steps) {
+            if (GameUtils.squares[pos].nextDiag1 != null) {
+                pos = GameUtils.squares[pos].nextDiag1;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    } else {
+        steps = -steps;
+        while (res && step <= steps) {
+            if (GameUtils.squares[pos].prevDiag1 != null) {
+                pos = GameUtils.squares[pos].prevDiag1;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    }
+
+    return [res, pos];
+}
+
+function canMoveLineDiagonal2(currentSquare, steps) {
+    var pos = currentSquare;
+    var res = true;
+    var step = 1;
+
+    if (steps > 0) {
+        while (res && step <= steps) {
+            if (GameUtils.squares[pos].nextDiag2 != null) {
+                pos = GameUtils.squares[pos].nextDiag2;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    } else {
+        steps = -steps;
+        while (res && step <= steps) {
+            if (GameUtils.squares[pos].prevDiag2 != null) {
+                pos = GameUtils.squares[pos].prevDiag2;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    }
+
+    return [res, pos];
+}
+
+async function moveLineHorizontal(playerToken, currentSquare, steps) { 
+    var pos = currentSquare;
+    if (steps > 0) {
+        for (var step = 1; step<=steps; step++) {
+            pos = GameUtils.squares[pos].nextHor;
+            
+            GameUtils.moveToken(playerToken, GameUtils.squares[pos].object);
+            await sleep(600);
+        }
+    } else if (steps < 0) {
+        for (var step = -1; step>=steps; step--) {
+            pos = GameUtils.squares[pos].prevHor;
+            
+            GameUtils.moveToken(playerToken, GameUtils.squares[pos].object);
+            await sleep(600);
+        }
+    }
     return pos;
 }
 
-function canMoveLineMinMax(currentBox, steps, min, max) {
-    var res = false;
-    if (currentBox >= min && currentBox <= max && steps != 0) {
-        res = (steps > 0)? (currentBox + steps <= max) : (currentBox + steps >= min);
-        console.log(res);
+async function moveLineDiagonal1(playerToken, currentSquare, steps) {
+    var pos = currentSquare;
+    if (steps > 0) {
+        for (var step = 1; step<=steps; step++) {
+            pos = GameUtils.squares[pos].nextDiag1;
+            
+            GameUtils.moveToken(playerToken, GameUtils.squares[pos].object);
+            await sleep(600);
+        }
+    } else if (steps < 0) {
+        for (var step = -1; step>=steps; step--) {
+            pos = GameUtils.squares[pos].prevDiag1;
+            
+            GameUtils.moveToken(playerToken, GameUtils.squares[pos].object);
+            await sleep(600);
+        }
     }
-    return [res, (currentBox + steps)];
+    return pos;
 }
 
-function canMoveLineHorizontal(currentBox, steps) {
-    
-    switch (currentBox) {
-        case 0:
-            currentBox = 41;
-            break; 
-        case 21:
-            currentBox = 53;
-            break;
-        default:
-            // Do Nothing 
+async function moveLineDiagonal2(playerToken, currentSquare, steps) {
+    var pos = currentSquare;
+    if (steps > 0) {
+        for (var step = 1; step<=steps; step++) {
+            pos = GameUtils.squares[pos].nextDiag2;
+            
+            GameUtils.moveToken(playerToken, GameUtils.squares[pos].object);
+            await sleep(600);
+        }
+    } else if (steps < 0) {
+        for (var step = -1; step>=steps; step--) {
+            pos = GameUtils.squares[pos].prevDiag2;
+            
+            GameUtils.moveToken(playerToken, GameUtils.squares[pos].object);
+            await sleep(600);
+        }
     }
-    var [b, p] = canMoveLineMinMax(currentBox, steps, 41, 53);
-    switch (p) {
-        case 41:
-            currentBox = 0;
-            break; 
-        case 53:
-            currentBox = 21;
-            break;
-        default:
-            // Do Nothing 
-    }
-    return [b, p];
+    return pos;
 }
-
-function canMoveLineDiagonal1(currentBox, steps) {
-    switch (currentBox) {
-        case 7:
-            currentBox = 52;
-            break; 
-        case 28:
-            currentBox = 64;
-            break;
-        default:
-            // Do Nothing
-    }
-    return canMoveLineMinMax(currentBox, steps, 52, 64);
-}
-
-function canMoveLineDiagonal2(currentBox, steps) {
-    switch (currentBox) {
-        case 14:
-            currentBox = 62;
-            break; 
-        case 35:
-            currentBox = 74;
-            break;
-        default:
-            // Do Nothing
-    }
-    return canMoveLineMinMax(currentBox, steps, 62, 74);
-}
-
-async function moveLineHorizontal(playerToken, currentBox, steps) { 
-    switch (currentBox) {
-        case 0:
-            currentBox = 41;
-            break; 
-        case 21:
-            currentBox = 53;
-            break;
-        default:
-            // Do Nothing
-    }
-    return await moveLineMinMax(playerToken, currentBox, steps, 41, 53);
-}
-
-async function moveLineDiagonal1(playerToken, currentBox, steps) {
-    switch (currentBox) {
-        case 7:
-            currentBox = 52;
-            break; 
-        case 28:
-            currentBox = 64;
-            break;
-        default:
-            // Do Nothing
-    }
-    return await moveLineMinMax(playerToken, currentBox, steps, 52, 64);
-}
-
-async function moveLineDiagonal2(playerToken, currentBox, steps) {
-    switch (currentBox) {
-        case 14:
-            currentBox = 62;
-            break; 
-        case 35:
-            currentBox = 74;
-            break;
-        default:
-            // Do Nothing
-    }
-    return moveLineMinMax(playerToken, currentBox, steps, 62, 74);
-}
-
 
 function printMsgString(string) {
     logs.value += '\r\n' + "Cliente: " + string;
