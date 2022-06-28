@@ -27,7 +27,7 @@ export var squares = {
     4: {object: null, nextRing: 5, prevRing: 3}, // greenRectangle6
     5: {object: null, nextRing: 6, prevRing: 4}, // grayRectangle2
     6: {object: null, nextRing: 7, prevRing: 5}, // pinkRectangle6
-    7: {object: null, isCheese: true, nextRing: 8, prevRing: 6, nextDiag1: 53}, // blueCheeseRectangle
+    7: {object: null, isCheese: true, nextRing: 8, prevRing: 6, nextDiag1: 52}, // blueCheeseRectangle
     8: {object: null, nextRing: 9, prevRing: 7}, // pinkRectangle7
     9: {object: null, nextRing: 10, prevRing: 8}, // grayRectangle3
     10: {object: null, nextRing: 11, prevRing: 9}, // yellowRectangle7
