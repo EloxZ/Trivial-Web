@@ -10,7 +10,7 @@ var players = {};
 
 // Socket connection
 var joinServerParameters = {token: token};
-const socket = io("ws://trivial-server-game.herokuapp.com:8082", {transports : ['websocket']}, {query: 'joinServerParameters=' + JSON.stringify(joinServerParameters)});
+const socket = io("wss://trivial-server-game.herokuapp.com:8082", {transports : ['websocket']}, {query: 'joinServerParameters=' + JSON.stringify(joinServerParameters)});
 
 socket.on("connected", printInConsole);
 socket.on("newGameCreated", lobby);
