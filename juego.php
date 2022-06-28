@@ -63,10 +63,6 @@ const AllowInclude = TRUE;
 </nav>
 
 <div class="container mt-5">
-    <h1>Bienvenido a TriviSiette</h1>
-    <h4 class="mt-4">En TriviSiette podrás crear o unirte a concursos de preguntas utilizando los servicios de Siette. Para crear un concurso, empieza creando un test en Siette e invita a los concursantes
-        compartiendo el código.</h4>
-    <p></p>
     <h5>[DEBUG]</h5>
     <?php
     if (isset($_SESSION['user'])) {
@@ -79,10 +75,37 @@ const AllowInclude = TRUE;
     ?>
 </div>
 
+<div class="container light-container p-4 mt-5 rounded border" id="divStartRoom">
+    <div class="row mb-5 justify-content-center"><h1>Crea o únete a una sala</h1></div>
+    <div class="row mb-3 justify-content-center">
+        <button type="button" id="createRoomButton" class="btn btn-lg btn-info">Crear nueva sala</button>
+    </div>
+    <div class="row mb-3 justify-content-center">
+        <label for="code" class="col-sm-2 col-form-label">Código</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control" id="code" name="code">
+        </div>
+        <button type="button" id="joinRoomButton" class="btn btn-lg btn-info">Unirse a sala</button>
+    </div>
+</div>
 
+<div class="container light-container p-4 mt-5 rounded border" id="divLobby" style="display:none;">
+    <div class="row mb-5 justify-content-center"><h1>Esperando jugadores</h1></div>
+    <div class="row mb-5 justify-content-center"><h1 id="gameId"></h1></div>
+    <div class="row mb-3 justify-content-center">
+        <h3>Jugadores: </h3>
+    </div>
+    <div class="row mb-3 justify-content-center">
+        <p id="playersJoined"></p>  
+    </div>
+    
+    <div class="row mb-3 justify-content-center">
+        <button type="button" id="startSessionButton" class="btn btn-lg btn-info">Empezar partida</button>
+    </div>
+</div>
 
-<div class="container-fluid">
-    <div id="div-canvas" class="row justify-content-center">
+<div class="container-fluid" id="divBoard" style="display:none;">
+    <div class="row justify-content-center">
         <div class="col-12 col-lg-2 status-container">
             <h3>Jugadores</h3>
             <!-- Dado -->

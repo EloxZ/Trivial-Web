@@ -27,14 +27,14 @@ export var squares = {
     4: {object: null, nextRing: 5, prevRing: 3}, // greenRectangle6
     5: {object: null, nextRing: 6, prevRing: 4}, // grayRectangle2
     6: {object: null, nextRing: 7, prevRing: 5}, // pinkRectangle6
-    7: {object: null, isCheese: true, nextRing: 8, prevRing: 6}, // blueCheeseRectangle
+    7: {object: null, isCheese: true, nextRing: 8, prevRing: 6, nextDiag1: 53}, // blueCheeseRectangle
     8: {object: null, nextRing: 9, prevRing: 7}, // pinkRectangle7
     9: {object: null, nextRing: 10, prevRing: 8}, // grayRectangle3
     10: {object: null, nextRing: 11, prevRing: 9}, // yellowRectangle7
     11: {object: null, nextRing: 12, prevRing: 10}, // brownRectangle7
     12: {object: null, nextRing: 13, prevRing: 11}, // grayRectangle4
     13: {object: null, nextRing: 14, prevRing: 12}, // greenRectangle7
-    14: {object: null, isCheese: true, nextRing: 15, prevRing: 13}, // orangeCheeseRectangle
+    14: {object: null, isCheese: true, nextRing: 15, prevRing: 13, nextDiag2: 62}, // orangeCheeseRectangle
     15: {object: null, nextRing: 16, prevRing: 14}, // greenRectangle8
     16: {object: null, nextRing: 17, prevRing: 15}, // grayRectangle5
     17: {object: null, nextRing: 18, prevRing: 16}, // pinkRectangle8
@@ -48,14 +48,14 @@ export var squares = {
     25: {object: null, nextRing: 26, prevRing: 24}, // orangeRectangle7
     26: {object: null, nextRing: 27, prevRing: 25}, // grayRectangle8
     27: {object: null, nextRing: 28, prevRing: 26}, // blueRectangle9
-    28: {object: null, isCheese: true, nextRing: 29, prevRing: 27}, // pinkCheeseRectangle
+    28: {object: null, isCheese: true, nextRing: 29, prevRing: 27, prevDiag1: 61}, // pinkCheeseRectangle
     29: {object: null, nextRing: 30, prevRing: 28}, // blueRectangle10
     30: {object: null, nextRing: 31, prevRing: 29}, // grayRectangle9
     31: {object: null, nextRing: 32, prevRing: 30}, // brownRectangle10
     32: {object: null, nextRing: 33, prevRing: 31}, // yellowRectangle8
     33: {object: null, nextRing: 34, prevRing: 32}, // grayRectangle10
     34: {object: null, nextRing: 35, prevRing: 33}, // orangeRectangle8
-    35: {object: null, isCheese: true, nextRing: 36, prevRing: 34}, // greenCheeseRectangle
+    35: {object: null, isCheese: true, nextRing: 36, prevRing: 34, prevDiag2: 71}, // greenCheeseRectangle
     36: {object: null, nextRing: 37, prevRing: 35}, // orangeRectangle9
     37: {object: null, nextRing: 38, prevRing: 36}, // grayRectangle11
     38: {object: null, nextRing: 39, prevRing: 37}, // blueRectangle11
@@ -228,7 +228,6 @@ export function unselectSquare(blinkSquare) {
     scene.removeListener("draw", blinkSquare);
 }
 
-
 export function getDiceNumber() {
     var number = 1;
 
@@ -261,9 +260,7 @@ export function getDiceNumber() {
     number = (max == sizeTop)? 5 : number;
     number = (max == sizeBot)? 6 : number;
 
-    console.log(number);
     return number;
-
 }
 
 export function drawBoard() {
@@ -882,4 +879,181 @@ function shadeColor(color, percent) {
     var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
 
     return "#"+RR+GG+BB;
+}
+
+export async function moveClockwise(playerToken, currentSquare, steps) {
+    var pos = currentSquare;
+    if (steps > 0) {
+        for (var step = 1; step<=steps; step++) {
+            pos = squares[pos].nextRing;
+            
+            moveToken(playerToken, squares[pos].object);
+            await timeout(600);
+        }
+    } else if (steps < 0) {
+        for (var step = -1; step>=steps; step--) {
+            pos = squares[pos].prevRing;
+            
+            moveToken(playerToken, squares[pos].object);
+            await timeout(600);
+        }
+    }
+    return pos;
+}
+
+export function canMoveClockwise(currentSquare, steps) {
+    var res = (currentSquare >= 0 && currentSquare < 42);
+    var pos1 = (currentSquare+steps)%42;
+    var pos2 = (currentSquare-steps);
+    if (pos2 < 0) {
+        pos2 += 42;
+    }
+    return [res, pos1, pos2]; 
+}
+
+export function canMoveLineHorizontal(currentSquare, steps) {
+    var pos = currentSquare;
+    var res = true;
+    var step = 1;
+
+    if (steps > 0) {
+        while (res && step <= steps) {
+            if (squares[pos].nextHor != null) {
+                pos = squares[pos].nextHor;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    } else {
+        steps = -steps;
+        while (res && step <= steps) {
+            if (squares[pos].prevHor != null) {
+                pos = squares[pos].prevHor;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    }
+
+    return [res, pos];
+}
+
+export function canMoveLineDiagonal1(currentSquare, steps) {
+    var pos = currentSquare;
+    var res = true;
+    var step = 1;
+
+    if (steps > 0) {
+        while (res && step <= steps) {
+            if (squares[pos].nextDiag1 != null) {
+                pos = squares[pos].nextDiag1;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    } else {
+        steps = -steps;
+        while (res && step <= steps) {
+            if (squares[pos].prevDiag1 != null) {
+                pos = squares[pos].prevDiag1;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    }
+
+    return [res, pos];
+}
+
+export function canMoveLineDiagonal2(currentSquare, steps) {
+    var pos = currentSquare;
+    var res = true;
+    var step = 1;
+
+    if (steps > 0) {
+        while (res && step <= steps) {
+            if (squares[pos].nextDiag2 != null) {
+                pos = squares[pos].nextDiag2;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    } else {
+        steps = -steps;
+        while (res && step <= steps) {
+            if (squares[pos].prevDiag2 != null) {
+                pos = squares[pos].prevDiag2;
+                step++;
+            } else {
+                res = false;
+            }
+        }
+    }
+
+    return [res, pos];
+}
+
+export async function moveLineHorizontal(playerToken, currentSquare, steps) { 
+    var pos = currentSquare;
+    if (steps > 0) {
+        for (var step = 1; step<=steps; step++) {
+            pos = squares[pos].nextHor;
+            
+            moveToken(playerToken, squares[pos].object);
+            await timeout(600);
+        }
+    } else if (steps < 0) {
+        for (var step = -1; step>=steps; step--) {
+            pos = squares[pos].prevHor;
+            
+            moveToken(playerToken, squares[pos].object);
+            await timeout(600);
+        }
+    }
+    return pos;
+}
+
+export async function moveLineDiagonal1(playerToken, currentSquare, steps) {
+    var pos = currentSquare;
+    if (steps > 0) {
+        for (var step = 1; step<=steps; step++) {
+            pos = squares[pos].nextDiag1;
+            
+            moveToken(playerToken, squares[pos].object);
+            await timeout(600);
+        }
+    } else if (steps < 0) {
+        for (var step = -1; step>=steps; step--) {
+            pos = squares[pos].prevDiag1;
+            
+            moveToken(playerToken, squares[pos].object);
+            await timeout(600);
+        }
+    }
+    return pos;
+}
+
+export async function moveLineDiagonal2(playerToken, currentSquare, steps) {
+    var pos = currentSquare;
+    if (steps > 0) {
+        for (var step = 1; step<=steps; step++) {
+            pos = squares[pos].nextDiag2;
+            
+            moveToken(playerToken, squares[pos].object);
+            await timeout(600);
+        }
+    } else if (steps < 0) {
+        for (var step = -1; step>=steps; step--) {
+            pos = squares[pos].prevDiag2;
+            
+            moveToken(playerToken, squares[pos].object);
+            await timeout(600);
+        }
+    }
+    return pos;
 }
